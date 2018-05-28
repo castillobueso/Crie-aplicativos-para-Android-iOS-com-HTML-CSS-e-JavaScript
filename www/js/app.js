@@ -1,4 +1,24 @@
+// Creamos una variable llamada app
 var app = angular.module('todoapp', ['ionic']);
+
+// Creamos el metodo config
+app.config(function($stateProvider, $urlRouterProvider) {
+
+  // Crear los estados. Estado list y new
+  $stateProvider.state('list', {
+    url : '/list',
+    templateUrl : 'templates/lista.html'
+  });
+
+  $stateProvider.state('new', {
+    url : '/new',
+    templateUrl : 'templates/novo.html'
+  });
+
+  // Esto lo hago por si no se tiene un estado inicial, el cargara el estado list
+  $urlRouterProvider.otherwise('/list');
+  
+});
 
 app.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

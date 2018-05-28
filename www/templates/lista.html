@@ -1,0 +1,34 @@
+<!-- -->
+<!-- La senetncia ion-view se utiliza para crear las views-->
+<!-- Para agregar el titulo de texto hacemos, view-title = "Lista"-->
+<ion-view view-title="Lista">
+
+    <!-- ion-nav-buttons, Esto significa que ahora cada view, va poder 
+        crear sus propios botones en la barra principal -->
+
+    <!-- side="secondary", Sirve para colocar el boton a la derecha -->
+    <ion-nav-buttons side="secondary">
+
+        <!-- <a href = "#/new", Lo utilizo para pasar a la view llamada new  -->
+        <!-- button ion-plus, esto sirve para agregar el boton + -->
+        <!-- button-icon, esto sirve para agregar que el boton +  se mayor-->
+        <a href = "#/new" class = "button button-icon ion-plus"></a>
+    </ion-nav-buttons>
+
+    <!-- ng-controller = "ListaCtrl" significa que todo lo que esta abajo de esta sentencia
+        va ser controlada por ella  -->
+    <ion-content ng-controller = "ListaCtrl">
+        <ion-list>
+            <ion-item ng-repeat = "t in tarefas">
+                {{t.texto}}
+
+                <!-- Creamos dos botones Concluir y Apagar --> 
+                <!-- Para activar los metodos de app.js concluir y apagar usamos ng-click -->
+                <!-- Agregar un icono icon-left ion-checkmark-round, de checar-->
+                <!-- Agregar un icono icon-left ion-trash-a, de basurero-->                
+                <ion-option-button class= "button-positive icon-left ion-checkmark-round" ng-click= "concluir($index)">Concluir</ion-option-button>
+                <ion-option-button class= "button-assertive icon-left ion-trash-a" ng-click= "apagar($index)" >Apagar</ion-option-button>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

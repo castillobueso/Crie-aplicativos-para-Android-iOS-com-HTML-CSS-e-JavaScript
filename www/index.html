@@ -19,25 +19,18 @@
   <body ng-app = "todoapp">
     <!-- -->
     <!--Esto va ser controlado por el controlador: app.controller('ListaCtrl' del app.jsL -->
-    <ion-pane ng-controller = "ListaCtrl">
-      <ion-header-bar class = "bar-positive">
-        <h1 class = "title">TodoApp</h1>
-      </ion-header-bar>
+    <ion-pane>
+      <ion-nav-bar class = "bar-positive">
+        <!-- on-nav-back-button, este es el boton de voltar -->
+        <ion-nav-back-button></ion-nav-back-button>
+      </ion-nav-bar>
 
-      <ion-content>
-        <ion-list>
-          <ion-item ng-repeat="t in tarefas">
-            {{t.texto}}
-            <!-- Creamos dos botones Concluir y Apagar --> 
-            <!-- Para activar los metodos de app.js concluir y apagar usamos ng-click -->
-            <!-- Agregar un icono icon-left ion-checkmark-round, de checar-->
-            <!-- Agregar un icono icon-left ion-trash-a, de basurero-->
-            
-            <ion-option-button class= "button-positive icon-left ion-checkmark-round" ng-click= "concluir($index)">Concluir</ion-option-button>
-            <ion-option-button class= "button-assertive icon-left ion-trash-a" ng-click= "apagar($index)" >Apagar</ion-option-button>
-          </ion-item>
-        </ion-list>
-      </ion-content>
+      <!-- ion-nav-view, significa que todas las view sera abiertas o sustituidas por estas setencias -->
+      <ion-nav-view>
+
+      </ion-nav-view>
+
+
     </ion-pane>
 
   </body>
