@@ -18,6 +18,7 @@
 
   <body ng-app = "todoapp">
 
+    <!--Esto va ser controlado por el controlador: app.controller('ListaCtrl' del app.jsL -->
     <ion-pane ng-controller = "ListaCtrl">
       <ion-header-bar class = "bar-positive">
         <h1 class = "title">TodoApp</h1>
@@ -25,7 +26,7 @@
 
       <ion-content>
         <ion-list>
-          <ion-item ng-repeat="t in tarefas">
+          <ion-item ng-repeat = "t in tarefas">
             {{t.texto}}
           </ion-item>
 

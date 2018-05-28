@@ -14,7 +14,8 @@ app.run(function($ionicPlatform) {
 });
 
 app.controller('ListaCtrl', function($scope) {
-
+  
+  // Creamos una variable tarefas que es un arreglo
   $scope.tarefas = [
     {
       "texto" : "Realizar as atividades do curso",
