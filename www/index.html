@@ -17,7 +17,7 @@
   </head>
 
   <body ng-app = "todoapp">
-
+    <!-- -->
     <!--Esto va ser controlado por el controlador: app.controller('ListaCtrl' del app.jsL -->
     <ion-pane ng-controller = "ListaCtrl">
       <ion-header-bar class = "bar-positive">
@@ -26,10 +26,16 @@
 
       <ion-content>
         <ion-list>
-          <ion-item ng-repeat = "t in tarefas">
+          <ion-item ng-repeat="t in tarefas">
             {{t.texto}}
+            <!-- Creamos dos botones Concluir y Apagar --> 
+            <!-- Para activar los metodos de app.js concluir y apagar usamos ng-click -->
+            <!-- Agregar un icono icon-left ion-checkmark-round, de checar-->
+            <!-- Agregar un icono icon-left ion-trash-a, de basurero-->
+            
+            <ion-option-button class= "button-positive icon-left ion-checkmark-round" ng-click= "concluir($index)">Concluir</ion-option-button>
+            <ion-option-button class= "button-assertive icon-left ion-trash-a" ng-click= "apagar($index)" >Apagar</ion-option-button>
           </ion-item>
-
         </ion-list>
       </ion-content>
     </ion-pane>

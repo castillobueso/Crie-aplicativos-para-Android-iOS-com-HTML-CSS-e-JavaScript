@@ -14,7 +14,7 @@ app.run(function($ionicPlatform) {
 });
 
 app.controller('ListaCtrl', function($scope) {
-  
+
   // Creamos una variable tarefas que es un arreglo
   $scope.tarefas = [
     {
@@ -27,7 +27,15 @@ app.controller('ListaCtrl', function($scope) {
       "data"  : new Date(),
       "feita" : true
     }
-
   ];
+
+  // Metodo concluir para activar el boton, indice es la posicion del objeto dentro del arreglo
+  $scope.concluir = function(indice) {
+    $scope.tarefas(indice).feita = true;
+  }
+
+  $scope.apagar = function(indice) {
+    $scope.tarefas.splice(indice, 1);
+  }
 
 });
