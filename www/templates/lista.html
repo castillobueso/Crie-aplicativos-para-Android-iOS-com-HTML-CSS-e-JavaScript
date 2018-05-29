@@ -2,13 +2,13 @@
 <!-- Archivo: lista.html-->
 <!-- La senetncia ion-view se utiliza para crear las views-->
 <!-- Para agregar el titulo de texto hacemos, view-title = "Lista"-->
-<ion-view view-title="Lista">
+<ion-view view-title = "Lista">
 
     <!-- ion-nav-buttons, Esto significa que ahora cada view, va poder 
         crear sus propios botones en la barra principal -->
 
     <!-- side="secondary", Sirve para colocar el boton a la derecha -->
-    <ion-nav-buttons side="secondary">
+    <ion-nav-buttons side = "secondary">
 
         <!-- <a href = "#/new", Lo utilizo para pasar a la view llamada new  -->
         <!-- button ion-plus, esto sirve para agregar el boton + -->
@@ -20,7 +20,9 @@
         va ser controlada por ella  -->
     <ion-content ng-controller = "ListaCtrl">
         <ion-list>
-            <ion-item ng-repeat = "t in tarefas">
+
+            <!-- Esto se utiliza para editar ng-click="editar($index), editar es una funcion  -->
+            <ion-item ng-repeat = "t in tarefas" ng-click="editar($index)">
                 {{t.texto}}
 
                 <!-- Creamos dos botones Concluir y Apagar --> 

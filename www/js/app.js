@@ -1,18 +1,27 @@
 // Creamos una variable llamada app
 var app = angular.module('todoapp', ['ionic']);
 
-// Creamos el metodo config
+// Creamos el metodo config donde van a estar los estados
 app.config(function($stateProvider, $urlRouterProvider) {
 
-  // Crear los estados. Estado list y new
+  // Crear el estado list
   $stateProvider.state('list', {
-    url : '/list',
+    url         : '/list',
     templateUrl : 'templates/lista.html'
   });
 
+  // Crear el estado new
   $stateProvider.state('new', {
-    url : '/new',
-    templateUrl : 'templates/novo.html'
+    url         : '/new',
+    templateUrl : 'templates/novo.html',
+    controller  : 'NovoCtrl'
+  });
+
+  // Crear el estado edit
+  $stateProvider.state('edit', {
+    url         : '/edit:indice',
+    templateUrl : 'templates/novo.html',
+    controller  : 'EditCtrl'
   });
 
   // Esto lo hago por si no se tiene un estado inicial, el cargara el estado list
@@ -47,7 +56,7 @@ var tarefas = [
   }
 ];
 
-app.controller('ListaCtrl', function($scope) {
+app.controller('ListaCtrl', function($scope, $state) {
 
   // Creamos una variable tarefas que es un arreglo y le asignamos los valores creados arriba en tarefas
   $scope.tarefas = tarefas
@@ -61,23 +70,44 @@ app.controller('ListaCtrl', function($scope) {
     $scope.tarefas.splice(indice, 1);
   }
 
+  $scope.editar = function(indice) {
+    $state.go('edit', {indice : indice});
+  }
 });
 
 // Crear un nuevo controller llamado NovoCtrl
 app.controller('NovoCtrl', function($scope, $state) {
 
+  $scope.tarefa = {
+
+    // input type="text" ng-model="texto", el texto sale de esta sentencia
+    "texto" : '',
+    "data"  : new Date(),
+    "feita" : false
+  };
+
   // Funcion salvar
   $scope.salvar = function() {
-      var tarefa = {
-
-        // input type="text" ng-model="texto", el texto sale de esta sentencia
-        "texto" : $scope.texto,
-        "data"  : new Date(),
-        "feita" : false
-      };
 
       // esto es para salvar mis datos
-      tarefas.push(tarefa);
+      tarefas.push($scope.tarefa);
+
+      // Este es el estado que quiero cargar al guardar mis datos
+      $state.go('list');
+  }
+});
+
+// Crear un nuevo controller llamado EditCtrl
+app.controller('EditCtrl', function($scope, $state, $stateParams) {
+
+  $scope.indice = $stateParams.indice;
+  $scope.tarefa = tarefas[$scope.indice];
+
+  // Funcion salvar
+  $scope.salvar = function() {
+
+      // esto es para salvar mis datos
+      tarefas[$scope.indice] =  $scope.tarefa;
 
       // Este es el estado que quiero cargar al guardar mis datos
       $state.go('list');
