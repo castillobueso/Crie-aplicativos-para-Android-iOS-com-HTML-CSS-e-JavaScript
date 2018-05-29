@@ -33,21 +33,24 @@ app.run(function($ionicPlatform) {
   });
 });
 
+// Crear una variable tarefas y agregamos la siguiente informacion que es un arreglo
+var tarefas = [
+  {
+    "texto" : "Realizar as atividades do curso",
+    "data"  : new Date(),
+    "feita" : false
+  },
+  {
+    "texto" : "Passera com o cachorro",
+    "data"  : new Date(),
+    "feita" : true
+  }
+];
+
 app.controller('ListaCtrl', function($scope) {
 
-  // Creamos una variable tarefas que es un arreglo
-  $scope.tarefas = [
-    {
-      "texto" : "Realizar as atividades do curso",
-      "data"  : new Date(),
-      "feita" : false
-    },
-    {
-      "texto" : "Passera com o cachorro",
-      "data"  : new Date(),
-      "feita" : true
-    }
-  ];
+  // Creamos una variable tarefas que es un arreglo y le asignamos los valores creados arriba en tarefas
+  $scope.tarefas = tarefas
 
   // Metodo concluir para activar el boton, indice es la posicion del objeto dentro del arreglo
   $scope.concluir = function(indice) {
@@ -58,4 +61,25 @@ app.controller('ListaCtrl', function($scope) {
     $scope.tarefas.splice(indice, 1);
   }
 
+});
+
+// Crear un nuevo controller llamado NovoCtrl
+app.controller('NovoCtrl', function($scope, $state) {
+
+  // Funcion salvar
+  $scope.salvar = function() {
+      var tarefa = {
+
+        // input type="text" ng-model="texto", el texto sale de esta sentencia
+        "texto" : $scope.texto,
+        "data"  : new Date(),
+        "feita" : false
+      };
+
+      // esto es para salvar mis datos
+      tarefas.push(tarefa);
+
+      // Este es el estado que quiero cargar al guardar mis datos
+      $state.go('list');
+  }
 });
