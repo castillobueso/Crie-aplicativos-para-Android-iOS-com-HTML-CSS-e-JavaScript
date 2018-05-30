@@ -21,8 +21,8 @@
     <ion-content ng-controller = "ListaCtrl">
         <ion-list>
 
-            <!-- Esto se utiliza para editar ng-click="editar($index), editar es una funcion  -->
-            <ion-item ng-repeat = "t in tarefas" ng-click="editar($index)">
+            <!-- Esto se utiliza para editar ng-click="editar($index), editar es una funcion  -->           
+            <ion-item ng-repeat = "t in tarefas track by $index" ng-click = "editar($index)">
                 {{t.texto}}
 
                 <!-- Creamos dos botones Concluir y Apagar --> 

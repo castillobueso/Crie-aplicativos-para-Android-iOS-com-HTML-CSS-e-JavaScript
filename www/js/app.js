@@ -56,18 +56,18 @@ var tarefas = [
   }
 ];
 
-app.controller('ListaCtrl', function($scope, $state) {
+app.controller('ListaCtrl', function($scope, $state, TarefaService) {
 
   // Creamos una variable tarefas que es un arreglo y le asignamos los valores creados arriba en tarefas
-  $scope.tarefas = tarefas
+  $scope.tarefas = TarefaService.lista();
 
   // Metodo concluir para activar el boton, indice es la posicion del objeto dentro del arreglo
   $scope.concluir = function(indice) {
-    $scope.tarefas(indice).feita = true;
+   TarefaService.concluir(indice);
   }
 
   $scope.apagar = function(indice) {
-    $scope.tarefas.splice(indice, 1);
+    TarefaService.apagar(indice);
   }
 
   $scope.editar = function(indice) {
@@ -76,7 +76,7 @@ app.controller('ListaCtrl', function($scope, $state) {
 });
 
 // Crear un nuevo controller llamado NovoCtrl
-app.controller('NovoCtrl', function($scope, $state) {
+app.controller('NovoCtrl', function($scope, $state, TarefaService) {
 
   $scope.tarefa = {
 
@@ -90,7 +90,7 @@ app.controller('NovoCtrl', function($scope, $state) {
   $scope.salvar = function() {
 
       // esto es para salvar mis datos
-      tarefas.push($scope.tarefa);
+      TarefaService.inserir($scope.tarefa);
 
       // Este es el estado que quiero cargar al guardar mis datos
       $state.go('list');
@@ -98,18 +98,61 @@ app.controller('NovoCtrl', function($scope, $state) {
 });
 
 // Crear un nuevo controller llamado EditCtrl
-app.controller('EditCtrl', function($scope, $state, $stateParams) {
+app.controller('EditCtrl', function($scope, $state, $stateParams, TarefaService) {
 
   $scope.indice = $stateParams.indice;
-  $scope.tarefa = tarefas[$scope.indice];
+  $scope.tarefa = angular.copy(TarefaService.obtem($scope.indice));
 
   // Funcion salvar
   $scope.salvar = function() {
 
       // esto es para salvar mis datos
-      tarefas[$scope.indice] =  $scope.tarefa;
+      TarefaService.alterar($scope.indice, $scope.tarefa);
 
       // Este es el estado que quiero cargar al guardar mis datos
       $state.go('list');
   }
+});
+
+// Crear un servicio llamado TarefaService, hay varios metodos para crearlo, vamos a usar factory
+app.factory('TarefaService', function() {
+
+    // Variable tarefas que es un arreglo
+    var tarefas = JSON.parse(window.localStorage.getItem('db_tarefas') || '[]');
+
+    function persistir() {
+      window.localStorage.setItem('db_tarefas', JSON.stringify(tarefas));
+    }
+
+    return {
+
+      lista: function() {
+        return tarefas;
+      },
+
+      obtem: function(indice) {
+        return tarefas[indice];
+      },
+
+      inserir: function(tarefa) {
+        tarefas.push(tarefa);
+        persistir();
+      },
+
+      alterar: function(indice, tarefa){
+        tarefas[indice] = tarefa;
+        persistir();
+      },
+
+      concluir: function(indice){
+        tarefas[indice].feita = true;
+        persistir();
+      },
+
+      apagar: function(indice) {
+        tarefas.splice(indice, 1);
+        persistir();
+      }
+
+    }
 });
