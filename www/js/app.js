@@ -56,10 +56,15 @@ var tarefas = [
   }
 ];
 
-app.controller('ListaCtrl', function($scope, $state, TarefaService) {
+app.controller('ListaCtrl', function($scope, $state, TarefaService, TarefaWebService) {
 
   // Creamos una variable tarefas que es un arreglo y le asignamos los valores creados arriba en tarefas
-  $scope.tarefas = TarefaService.lista();
+  // $scope.tarefas = TarefaWebService.lista();
+
+  TarefaWebService.lista().then(function(dados) {
+    $scope.tarefas = dados;
+  });
+
 
   // Metodo concluir para activar el boton, indice es la posicion del objeto dentro del arreglo
   $scope.concluir = function(indice) {
@@ -155,4 +160,54 @@ app.factory('TarefaService', function() {
       }
 
     }
+});
+
+// Crear un servicio llamado TarefaWebService, hay varios metodos para crearlo, vamos a usar factory
+//  Adicionar un servicio $q
+app.factory('TarefaWebService', function($http, $q) {
+
+  // Crear una variable llamada url que es mi url local 
+  var url = 'http://localhost:3004/api/tarefa';
+
+  return {
+
+    lista: function() {
+
+      // Crear una variable deferido
+      var deferido = $q.defer();
+
+      $http.get(url).then(function(response) {
+        // data es la variable que contiene los datos de mi retorno de mi servidor
+        deferido.resolve(response.data);
+      });
+
+      return deferido.promise;
+
+    },
+
+    obtem: function(indice) {
+      return tarefas[indice];
+    },
+
+    inserir: function(tarefa) {
+      tarefas.push(tarefa);
+      persistir();
+    },
+
+    alterar: function(indice, tarefa){
+      tarefas[indice] = tarefa;
+      persistir();
+    },
+
+    concluir: function(indice){
+      tarefas[indice].feita = true;
+      persistir();
+    },
+
+    apagar: function(indice) {
+      tarefas.splice(indice, 1);
+      persistir();
+    }
+
+  }
 });
