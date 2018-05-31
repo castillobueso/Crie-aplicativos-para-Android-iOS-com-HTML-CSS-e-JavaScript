@@ -6,22 +6,24 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   // Crear el estado list
   $stateProvider.state('list', {
-    url         : '/list',
-    templateUrl : 'templates/lista.html'
+    //  cache:Se utiliza para actualizar mi lista cuando ingreso una nueva tarefa
+    cache: false,
+    url: '/list',
+    templateUrl: 'templates/lista.html'
   });
 
   // Crear el estado new
   $stateProvider.state('new', {
-    url         : '/new',
-    templateUrl : 'templates/novo.html',
-    controller  : 'NovoCtrl'
+    url: '/new',
+    templateUrl: 'templates/novo.html',
+    controller: 'NovoCtrl'
   });
 
   // Crear el estado edit
   $stateProvider.state('edit', {
-    url         : '/edit:indice',
-    templateUrl : 'templates/novo.html',
-    controller  : 'EditCtrl'
+    url: '/edit/:indice',
+    templateUrl: 'templates/novo.html',
+    controller: 'EditCtrl'
   });
 
   // Esto lo hago por si no se tiene un estado inicial, el cargara el estado list
@@ -43,6 +45,7 @@ app.run(function($ionicPlatform) {
 });
 
 // Crear una variable tarefas y agregamos la siguiente informacion que es un arreglo
+
 var tarefas = [
   {
     "texto" : "Realizar as atividades do curso",
@@ -65,14 +68,22 @@ app.controller('ListaCtrl', function($scope, $state, TarefaService, TarefaWebSer
     $scope.tarefas = dados;
   });
 
-
   // Metodo concluir para activar el boton, indice es la posicion del objeto dentro del arreglo
-  $scope.concluir = function(indice) {
-   TarefaService.concluir(indice);
+  $scope.concluir = function(indice, tarefa) {
+    tarefa.feita = true;
+    TarefaWebService.concluir(indice, tarefa).then(function() {
+        TarefaWebService.lista().then(function(dados) {
+          $scope.tarefas = dados;
+        });     
+     });
   }
 
   $scope.apagar = function(indice) {
-    TarefaService.apagar(indice);
+    TarefaWebService.apagar(indice).then(function() {
+      TarefaWebService.lista().then(function(dados) {
+          $scope.tarefas = dados;
+      });
+    });
   }
 
   $scope.editar = function(indice) {
@@ -81,13 +92,13 @@ app.controller('ListaCtrl', function($scope, $state, TarefaService, TarefaWebSer
 });
 
 // Crear un nuevo controller llamado NovoCtrl
-app.controller('NovoCtrl', function($scope, $state, TarefaService) {
+app.controller('NovoCtrl', function($scope, $state, TarefaWebService) {
 
   $scope.tarefa = {
 
     // input type="text" ng-model="texto", el texto sale de esta sentencia
     "texto" : '',
-    "data"  : new Date(),
+    "data" : new Date(),
     "feita" : false
   };
 
@@ -95,27 +106,32 @@ app.controller('NovoCtrl', function($scope, $state, TarefaService) {
   $scope.salvar = function() {
 
       // esto es para salvar mis datos
-      TarefaService.inserir($scope.tarefa);
+      TarefaWebService.inserir($scope.tarefa).then(function() {
 
-      // Este es el estado que quiero cargar al guardar mis datos
-      $state.go('list');
+        // Este es el estado que quiero cargar al guardar mis datos
+        $state.go('list');
+      });
   }
 });
 
 // Crear un nuevo controller llamado EditCtrl
-app.controller('EditCtrl', function($scope, $state, $stateParams, TarefaService) {
+app.controller('EditCtrl', function($scope, $state, $stateParams, TarefaWebService) {
 
   $scope.indice = $stateParams.indice;
-  $scope.tarefa = angular.copy(TarefaService.obtem($scope.indice));
+  //$scope.tarefa = angular.copy(TarefaService.obtem($scope.indice));
+  TarefaWebService.obtem($scope.indice).then(function(dados) {
+    $scope.tarefa = dados;
+  })
 
   // Funcion salvar
   $scope.salvar = function() {
 
       // esto es para salvar mis datos
-      TarefaService.alterar($scope.indice, $scope.tarefa);
+      TarefaWebService.alterar($scope.indice, $scope.tarefa).then(function() {
 
-      // Este es el estado que quiero cargar al guardar mis datos
-      $state.go('list');
+        // Este es el estado que quiero cargar al guardar mis datos
+        $state.go('list');
+      }); 
   }
 });
 
@@ -155,10 +171,9 @@ app.factory('TarefaService', function() {
       },
 
       apagar: function(indice) {
-        tarefas.splice(indice, 1);
+        tarefas.splice(indice,1);
         persistir();
       }
-
     }
 });
 
@@ -182,32 +197,57 @@ app.factory('TarefaWebService', function($http, $q) {
       });
 
       return deferido.promise;
-
     },
 
     obtem: function(indice) {
-      return tarefas[indice];
+
+      // Crear una variable deferido
+      var deferido = $q.defer();
+
+      $http.get(url + '/' + indice).then(function(response) {
+        // data es la variable que contiene los datos de mi retorno de mi servidor
+        deferido.resolve(response.data);
+      });
+
+      return deferido.promise;
     },
 
     inserir: function(tarefa) {
-      tarefas.push(tarefa);
-      persistir();
+
+      var deferido = $q.defer();
+      $http.post(url, tarefa).then(function() {
+        deferido.resolve();
+      });
+      return deferido.promise;
     },
 
     alterar: function(indice, tarefa){
-      tarefas[indice] = tarefa;
-      persistir();
+
+      var deferido = $q.defer();
+
+      $http.put(url + '/' + indice, tarefa).then(function() {
+        deferido.resolve();
+      });
+      return deferido.promise;
     },
 
-    concluir: function(indice){
-      tarefas[indice].feita = true;
-      persistir();
+    concluir: function(indice, tarefa){
+      var deferido = $q.defer();
+
+      $http.put(url + '/' + indice, tarefa).then(function() {
+        deferido.resolve();
+      });
+      return deferido.promise;
     },
 
     apagar: function(indice) {
-      tarefas.splice(indice, 1);
-      persistir();
-    }
 
+      var deferido = $q.defer();
+
+      $http.delete(url + '/' + indice).then(function() {
+        deferido.resolve();
+      });
+      return deferido.promise;
+    }
   }
 });

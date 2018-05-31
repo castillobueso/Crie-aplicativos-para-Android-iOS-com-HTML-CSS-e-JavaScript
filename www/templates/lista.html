@@ -1,6 +1,6 @@
 <!-- -->
 <!-- Archivo: lista.html-->
-<!-- La senetncia ion-view se utiliza para crear las views-->
+<!-- La sentencia ion-view se utiliza para crear las views-->
 <!-- Para agregar el titulo de texto hacemos, view-title = "Lista"-->
 <ion-view view-title = "Lista">
 
@@ -22,15 +22,16 @@
         <ion-list>
 
             <!-- Esto se utiliza para editar ng-click="editar($index), editar es una funcion  -->           
-            <ion-item ng-repeat = "t in tarefas track by $index" ng-click = "editar($index)">
+            <!--<ion-item ng-repeat = "t in tarefas track by $index" ng-click = "editar(t.id)">-->
+            <ion-item ng-repeat= "t in tarefas" ng-click= "editar(t.id)">
                 {{t.texto}}
 
                 <!-- Creamos dos botones Concluir y Apagar --> 
                 <!-- Para activar los metodos de app.js concluir y apagar usamos ng-click -->
                 <!-- Agregar un icono icon-left ion-checkmark-round, de checar-->
                 <!-- Agregar un icono icon-left ion-trash-a, de basurero-->                
-                <ion-option-button class= "button-positive icon-left ion-checkmark-round" ng-click= "concluir($index)">Concluir</ion-option-button>
-                <ion-option-button class= "button-assertive icon-left ion-trash-a" ng-click= "apagar($index)" >Apagar</ion-option-button>
+                <ion-option-button class= "button-positive icon-left ion-checkmark-round" ng-click="concluir(t.id, t)">Concluir</ion-option-button>
+                <ion-option-button class= "button-assertive icon-left ion-trash-a" ng-click="apagar(t.id)">Apagar</ion-option-button>
             </ion-item>
         </ion-list>
     </ion-content>
