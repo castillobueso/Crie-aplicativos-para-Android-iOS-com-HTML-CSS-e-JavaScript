@@ -22,12 +22,22 @@ app.config(function($stateProvider, $urlRouterProvider) {
   // Crear el estado edit
   $stateProvider.state('edit', {
     url: '/edit/:indice',
+    pageTitle: 'Editar',
     templateUrl: 'templates/novo.html',
     controller: 'EditCtrl'
   });
 
-  // Esto lo hago por si no se tiene un estado inicial, el cargara el estado list
-  $urlRouterProvider.otherwise('/list');
+  // Crear el estado login
+  $stateProvider.state('login', {
+    url: '/login',
+    pageTitle: 'Login',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
+  });
+
+
+  // El estado inicial sera login
+  $urlRouterProvider.otherwise('/login');
   
 });
 
@@ -135,6 +145,34 @@ app.controller('EditCtrl', function($scope, $state, $stateParams, TarefaWebServi
   }
 });
 
+// Crear un nuevo controller llamado login
+app.controller('LoginCtrl', function($scope, $http, $state, $ionicHistory, $ionicPopup) {
+  $scope.usuario = {};
+  $scope.login = function() {
+
+    $http.post('http://localhost:3004/api/usuario', $scope.usuario)
+      .then(function(response){
+
+      if(response.status == 200){
+        window.localStorage.setItem('usuario', JSON.stringify(response.data));
+
+        $ionicHistory.nextViewOptions({
+
+          // Con esto se desactiva el boton <Back
+          disableBack: true
+         });
+        $state.go('list');
+      }
+    }, function(response){
+        $ionicPopup.alert(
+          {
+              title: 'Falha no acesso',
+              template: 'Usuario invalido'
+          });
+    });
+  }
+});
+
 // Crear un servicio llamado TarefaService, hay varios metodos para crearlo, vamos a usar factory
 app.factory('TarefaService', function() {
 
@@ -184,6 +222,11 @@ app.factory('TarefaWebService', function($http, $q) {
   // Crear una variable llamada url que es mi url local 
   var url = 'http://localhost:3004/api/tarefa';
 
+  // Crear una variable llamada config
+  var config = {
+    headers: {'Authorization': JSON.parse(window.localStorage.getItem('usuario')).token}
+  }
+
   return {
 
     lista: function() {
@@ -191,7 +234,7 @@ app.factory('TarefaWebService', function($http, $q) {
       // Crear una variable deferido
       var deferido = $q.defer();
 
-      $http.get(url).then(function(response) {
+      $http.get(url, config).then(function(response) {
         // data es la variable que contiene los datos de mi retorno de mi servidor
         deferido.resolve(response.data);
       });
